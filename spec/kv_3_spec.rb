@@ -14,9 +14,19 @@ describe KV3 do
     expect(kv.get(:a)).to eq 1
   end
 
+  it 'returns key by timetsamp' do
+    t1 = kv.set(:a, 1)
+    sleep(0.001)
+    kv.set(:a, 2)
+
+    expect(kv.get(:a, t1)).to eq 1
+  end
+
   it 'returns the last set key if key is set multiple times' do
     kv.set(:a, 1)
+    sleep(0.001)
     kv.set(:a, 2)
+    sleep(0.001)
     kv.set(:a, -1)
 
     expect(kv.get(:a)).to eq -1
@@ -24,21 +34,20 @@ describe KV3 do
 
   it 'returns the last set key if timestamp is in the future' do
     kv.set(:a, 1)
+    sleep(0.001)
     kv.set(:a, 2)
-    kv.set(:a, -1)
+    sleep(0.001)
+    t3 = kv.set(:a, -1)
 
-    expect(kv.get(:a, Time.now.to_i + 10000)).to eq -1
+    expect(kv.get(:a, t3 + 10000)).to eq -1
   end
 
   it 'returns key which is closest to timestamp (in the past)' do
-    t = Time.now.to_i
+    t1 = kv.set(:a, 1)
+    sleep(0.001)
+    t2 = kv.set(:a, 2)
 
-    kv.set(:a, 1, t)
-    kv.set(:a, 2, t + 2)
-    kv.set(:a, 3, t + 4)
-
-    expect(kv.get(:a, t)).to eq 1
-    expect(kv.get(:a, t + 1)).to eq 1
-    expect(kv.get(:a, t + 3)).to eq 2
+    middle_t = ((t1 + t2)/2.0).round
+    expect(kv.get(:a, middle_t)).to eq 1
   end
 end

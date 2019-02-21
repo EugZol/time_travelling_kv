@@ -24,8 +24,8 @@ class KV2
     @store = {}
   end
 
-  def set(k, v, timestamp = nil)
-    t = timestamp.to_i || Time.now.to_i
+  def set(k, v)
+    t = Time.now.strftime("%s%N").to_i
 
     @store[k] ||= {}
     @store[k][t] = v

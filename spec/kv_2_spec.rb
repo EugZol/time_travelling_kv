@@ -14,7 +14,8 @@ describe KV2 do
 
   it 'returns key by timestamp' do
     t1 = kv.set(:a, 1)
-    t2 = kv.set(:a, 2, Time.now + 1000)
+    sleep(0.001)
+    kv.set(:a, 2)
 
     expect(kv.get(:a, t1)).to eq 1
   end

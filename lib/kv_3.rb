@@ -22,16 +22,15 @@ class KV3
     @store = {}
   end
 
-  # timestamp is dependency injection for testing
-  def set(k, v, timestamp = nil)
-    t = timestamp.to_i || Time.now.to_i
+  def set(k, v)
+    t = Time.now.strftime("%s%N").to_i
 
-    # 'bundle' is a sorted array of [timestamp, value] records
+    # @store[k] is a sorted array of [timestamp, value] records
     # for key == k
     @store[k] ||= []
-    bundle = @store[k]
+    @store[k] << [t, v]
 
-    bundle << [t, v]
+    t
   end
 
   def get(k, timestamp = nil)
